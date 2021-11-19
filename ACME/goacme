@@ -1,0 +1,15 @@
+#!/bin/bash
+
+## STOP THE MUSIC! ==================================================
+cd /home/cdx/acme
+sudo docker-compose stop
+sudo docker-compose down
+sudo yes | sudo docker system prune -a
+
+## START THE MUSIC! ==================================================
+docker-compose up -d
+
+sudo docker ps >/home/cdx/jitsidockerps.txt 
+sudo docker network ls >>/home/cdx/jitsidockerps.txt
+sudo docker network inspect acme_blammonet >>/home/cdx/jitsidockerps.txt
+

@@ -1,0 +1,2 @@
+79.131.57.218 - - [13/Nov/2020:19:08:50 +0000] "OPTIONS /api/auth HTTP/1.1" 204 0 "http://localhost/?vx=krifa" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36"
+79.131.57.218 - - [13/Nov/2020:19:08:53 +0000] "POST /api/auth HTTP/1.1" 404 0 "http://localhost/?vx=krifa" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36"
