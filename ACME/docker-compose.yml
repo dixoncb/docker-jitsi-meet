@@ -17,6 +17,24 @@ services:
         networks:
             blammonet:
 
+    # XMPP server
+    prosody:
+        image: jitsi/prosody:latest
+        restart: ${RESTART_POLICY}
+        expose:
+            - '5222'
+            - '5347'
+            - '5280'
+        ports:
+            - '5222:5222'
+            - '5347:5347'
+            - '5280:5280'
+        volumes:
+            - ./prosody/config:/config
+            - /var/log/prosody:/var/log/prosody
+            - ./prosody/plugins_custom//prosody-plugins-custom
+
+
 # Custom network so all services can communicate using a FQDN
 networks:
     blammonet:
