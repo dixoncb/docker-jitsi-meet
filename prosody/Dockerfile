@@ -1,25 +1,24 @@
-ARG JITSI_REPO=jitsi
-ARG BASE_TAG=latest
+# --- Stage 1: Build LuaRocks plugins ---
+  FROM illustra/base:my-custom AS builder
 
-FROM ${JITSI_REPO}/base:${BASE_TAG} AS builder
-
-RUN apt-dpkg-wrap apt-get update && \
-    apt-dpkg-wrap apt-get install -y \
-      build-essential \
-      lua5.4 \
-      liblua5.4-dev \
-      libreadline-dev \
-      git \
-      unzip \
-      wget && \
-    mkdir /tmp/luarocks && \
-    wget -qO - https://luarocks.github.io/luarocks/releases/luarocks-3.8.0.tar.gz | tar xfz - --strip-components 1 -C /tmp/luarocks && \
-    cd /tmp/luarocks && ./configure && make && make install && cd - && \
-    luarocks install basexx 0.4.1-1 && \
-    luarocks install lua-cjson 2.1.0-1 && \
-    luarocks install net-url 0.9-1
-
-FROM ${JITSI_REPO}/base:${BASE_TAG}
+  RUN apt-get update && \
+      apt-get install -y \
+        build-essential \
+        lua5.4 \
+        liblua5.4-dev \
+        libreadline-dev \
+        git \
+        unzip \
+        wget && \
+      mkdir /tmp/luarocks && \
+      wget -qO - https://luarocks.github.io/luarocks/releases/luarocks-3.8.0.tar.gz | tar xfz - --strip-components 1 -C /tmp/luarocks && \
+      cd /tmp/luarocks && ./configure && make && make install && cd - && \
+      luarocks install basexx 0.4.1-1 && \
+      luarocks install lua-cjson 2.1.0-1 && \
+      luarocks install net-url 0.9-1
+  
+  # --- Stage 2: Final Image ---
+  FROM illustra/base:my-custom
 
 LABEL org.opencontainers.image.title="Prosody IM"
 LABEL org.opencontainers.image.description="XMPP server used for signalling."
@@ -32,10 +31,8 @@ ARG VERSION_MATRIX_USER_VERIFICATION_SERVICE_PLUGIN="1.8.0"
 ARG PROSODY_PACKAGE="prosody"
 
 RUN set -x && \
-    wget -qO /etc/apt/trusted.gpg.d/prosody.gpg https://prosody.im/files/prosody-debian-packages.key && \
-    echo "deb http://packages.prosody.im/debian bookworm main" > /etc/apt/sources.list.d/prosody.list && \
-    apt-dpkg-wrap apt-get update && \
-    apt-dpkg-wrap apt-get install -y \
+    apt-get update && \
+    apt-get install -y \
       lua5.4 \
       $PROSODY_PACKAGE \
       libldap-common \
@@ -47,11 +44,12 @@ RUN set -x && \
       lua-luaossl \
       lua-sec \
       lua-unbound && \
-    apt-dpkg-wrap apt-get -d install -y jitsi-meet-prosody && \
+    apt-get -d install -y jitsi-meet-prosody && \
     dpkg -x /var/cache/apt/archives/jitsi-meet-prosody*.deb /tmp/pkg && \
     mv /tmp/pkg/usr/share/jitsi-meet/prosody-plugins /prosody-plugins && \
     rm -rf /tmp/pkg /var/cache/apt && \
-    apt-cleanup && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
     rm -rf /etc/prosody && \
     mv /usr/share/lua/5.3/inspect.lua /usr/share/lua/5.4/ && \
     rm -rf /usr/lib/lua/{5.1,5.2,5.3} && \
