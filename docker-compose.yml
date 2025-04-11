@@ -372,7 +372,8 @@ services:
             - ENABLE_VISITORS
             - ENABLE_AUTO_LOGIN
             - JICOFO_AUTH_LIFETIME
-            - JICOFO_AUTH_PASSWORD
+            - JICOFO_AUTH_USER=${JICOFO_AUTH_USER}
+            - JICOFO_AUTH_PASSWORD=${JICOFO_AUTH_PASSWORD}
             - JICOFO_AUTH_TYPE
             - JICOFO_BRIDGE_REGION_GROUPS
             - JICOFO_ENABLE_AUTH
